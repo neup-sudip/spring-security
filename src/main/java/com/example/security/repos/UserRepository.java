@@ -13,7 +13,5 @@ public interface UserRepository extends JpaRepository<Customer, Long> {
     @Query(value = "SELECT * FROM users WHERE user_id <> :id AND username = :username LIMIT 1", nativeQuery = true)
     Customer findByNotIdAndUsername(long id, String username);
 
-    @Query(value = "SELECT * FROM users WHERE username = :username AND password = :password", nativeQuery = true)
-    Customer findByUsernameAndPassword(String username, String password);
 
 }

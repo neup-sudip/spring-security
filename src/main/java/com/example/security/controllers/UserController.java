@@ -1,5 +1,6 @@
 package com.example.security.controllers;
 
+import com.example.security.dto.CustomerDto;
 import com.example.security.entity.Customer;
 import com.example.security.services.UserService;
 import com.example.security.utils.ApiResponse;
@@ -26,9 +27,9 @@ public class UserController {
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('GET_SINGLE_USER')")
     public ResponseEntity<ApiResponse> getUserById(@PathVariable long id) {
-        Optional<Customer> customer = userService.getUserById(id);
+        Optional<CustomerDto> customer = userService.getUserById(id);
         if (customer.isEmpty()) {
-            ApiResponse apiResponse = new ApiResponse(true, null, "Error fetching user");
+            ApiResponse apiResponse = new ApiResponse(true, null, "User not found.");
             return ResponseEntity.status(400).body(apiResponse);
         } else {
             ApiResponse apiResponse = new ApiResponse(true, customer.get(), "User fetched successfully");
@@ -39,7 +40,7 @@ public class UserController {
     @PostMapping()
     @PreAuthorize("hasAuthority('CREATE_USER')")
     public ResponseEntity<ApiResponse> createUser(@RequestBody Customer newCustomer) {
-        Customer customer = userService.addNewUser(newCustomer);
+        CustomerDto customer = userService.addNewUser(newCustomer);
         ApiResponse apiResponse = new ApiResponse(true, customer, "User created successfully !");
         return ResponseEntity.status(200).body(apiResponse);
     }

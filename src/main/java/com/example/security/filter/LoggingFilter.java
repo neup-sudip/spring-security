@@ -6,7 +6,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import jakarta.annotation.Nonnull;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletOutputStream;
@@ -16,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
@@ -26,14 +24,13 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.StringTokenizer;
 
-@Slf4j
 @Component
-@Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class LoggingFilter extends OncePerRequestFilter {
 
     @Override
-    protected void doFilterInternal(@Nonnull HttpServletRequest request, @Nonnull HttpServletResponse response,
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
         long beginTime = System.currentTimeMillis();
@@ -61,7 +58,7 @@ public class LoggingFilter extends OncePerRequestFilter {
 
         if (isNotJsonContentType(responseWrapper.getContentType())) {
             log.info(
-                    "\n[REQUEST({}) > username: {}, ip: {}, Agent: {}, URI: {}, Parameters: {}, TotalTimeCost: [{}]ms \n",
+                    "[REQUEST({}) > username: {}, ip: {}, Agent: {}, URI: {}, Parameters: {}, TotalTimeCost: [{}]ms ",
                     prop.getMethod(), username, prop.getIp(), prop.getAgent(), prop.getUri(), prettyRequestParam, timeCost);
         } else {
             final String result = convertString(responseWrapper.getContentAsByteArray());
@@ -69,7 +66,7 @@ public class LoggingFilter extends OncePerRequestFilter {
             final String httpsStatus = HttpStatus.valueOf(responseWrapper.getStatus()).name();
 
             log.info(
-                    "\r\n[REQUEST({}) > username: {}, ip: {}, Agent: {}, URI: {}, Parameters: {}, \nRESPONSE({}), TotalTimeCost: [{}]ms \n",
+                    "[REQUEST({}) > username: {}, ip: {}, Agent: {}, URI: {}, Parameters: {}, RESPONSE({}), TotalTimeCost: [{}]ms",
                     prop.getMethod(), username, prop.getIp(), prop.getAgent(), prop.getUri(), prettyRequestParam,
                     httpsStatus, timeCost);
 
