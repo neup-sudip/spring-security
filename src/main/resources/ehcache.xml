@@ -1,0 +1,35 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.ehcache.org/v3"
+        xmlns:jsr107="http://www.ehcache.org/v3/jsr107"
+        xsi:schemaLocation="
+            http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core-3.0.xsd
+            http://www.ehcache.org/v3/jsr107 http://www.ehcache.org/schema/ehcache-107-ext-3.0.xsd">
+
+    <persistence directory="D:/cache"/>
+
+    <cache alias="roleCache">
+        <key-type>java.lang.Long</key-type>
+        <value-type>com.example.security.entity.Role</value-type>
+        <expiry>
+            <ttl unit="minutes">30</ttl>
+        </expiry>
+
+        <resources>
+            <disk persistent="true" unit="MB">100</disk>
+        </resources>
+
+    </cache>
+
+    <cache alias="defaultCache">
+        <key-type>java.lang.String</key-type>
+        <value-type>java.lang.String</value-type>
+        <expiry>
+            <ttl unit="millis">5</ttl>
+        </expiry>
+
+        <resources>
+            <offheap unit="MB">10</offheap>
+        </resources>
+    </cache>
+
+</config>
