@@ -21,6 +21,7 @@ public class StartUpService implements CommandLineRunner {
     public void run(String... args) {
         try {
             CustomerDto user = userService.addNewUser(Customer.builder()
+                    .role(1)
                     .username("username")
                     .password("password").build());
 

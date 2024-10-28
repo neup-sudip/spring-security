@@ -11,8 +11,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CustomerLogin {
-    private String username;
-
-    private String password;
+public class QrAuthDto {
+    private String token;
 }

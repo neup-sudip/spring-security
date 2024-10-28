@@ -40,6 +40,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/public/**").permitAll())
                 .authorizeHttpRequests(requests -> requests
+                        .requestMatchers("/ws/**").permitAll())
+                .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/api/v1/**").authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS).maximumSessions(1))
