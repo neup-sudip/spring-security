@@ -3,19 +3,19 @@ package com.example.security.utils;
 
 import com.example.security.entity.Customer;
 import com.example.security.models.AuthResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.HttpServletRequest;
 import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import io.jsonwebtoken.Jwts;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Map;
 
 @Service
 public class JwtUtils {
@@ -76,8 +76,9 @@ public class JwtUtils {
         Key key = new SecretKeySpec(JWT_SECRET.getBytes(), SignatureAlgorithm.HS512.getJcaName());
         Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody();
 
-        Map<String, Object> userMap = claims.get("user", Map.class);
-        return (String) userMap.get("username");
+        ObjectMapper mapper = new ObjectMapper();
+        Customer customer = mapper.convertValue(claims.get("user"), Customer.class);
+        return customer.getUsername();
     }
 
     public AuthResponse getAuthResponse(Customer customer){
