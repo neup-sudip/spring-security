@@ -1,15 +1,13 @@
 package com.example.security.controllers;
 
+import com.example.security.dto.CustomerLogin;
 import com.example.security.services.TestService;
 import com.example.security.utils.ApiResponse;
 import com.example.security.utils.Translator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,8 +22,9 @@ public class TestController {
         return ResponseEntity.ok(new ApiResponse(true, testService.testCache(key), "Cache data."));
     }
 
-    @GetMapping()
+    @PostMapping()
     public String getString() {
+        log.info("Hit test API");
         return translator.getMessage("hello.sir");
     }
 

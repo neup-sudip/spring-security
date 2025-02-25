@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,6 +21,7 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 @Slf4j
+@Order(1)
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final CustomUserDetailsService customUserDetailsService;
@@ -36,7 +38,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             boolean isValid = jwtUtils.validateToken(token);
             username = isValid ? jwtUtils.getUsername(token) : null;
         }
-        log.info("USERNAME: {}", username);
 
         if(username != null){
             UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
