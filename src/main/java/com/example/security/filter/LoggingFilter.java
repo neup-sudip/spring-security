@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
@@ -21,22 +22,20 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Slf4j
 @Order(2)
-public class LoggingFilter implements Filter {
+public class LoggingFilter extends OncePerRequestFilter {
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain)
-            throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
+                                    FilterChain filterChain) throws ServletException, IOException {
 
         long beginTime = System.currentTimeMillis();
 
-        HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
-        HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
         ContentCachingRequestWrapper requestWrapper = new ContentCachingRequestWrapper(httpServletRequest);
         ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(httpServletResponse);
 
         HttpServletRequest request = new RequestWrapper(requestWrapper);
 
-        chain.doFilter(request, responseWrapper);
+        filterChain.doFilter(request, responseWrapper);
 
         String requestParam = HttpHelpers.getRequestBody(request);
         ActivityProperty prop = HttpHelpers.getActivity(request);
