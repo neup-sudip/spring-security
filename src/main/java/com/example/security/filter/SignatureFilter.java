@@ -1,6 +1,6 @@
 package com.example.security.filter;
 
-import com.example.security.utils.ApiResponse;
+import com.example.security.models.ApiResponse;
 import com.example.security.utils.CryptoUtils;
 import com.example.security.utils.HttpHelpers;
 import com.example.security.utils.RequestWrapper;

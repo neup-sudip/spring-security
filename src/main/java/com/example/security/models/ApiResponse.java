@@ -1,4 +1,4 @@
-package com.example.security.utils;
+package com.example.security.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

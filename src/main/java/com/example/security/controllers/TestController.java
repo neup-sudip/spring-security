@@ -1,8 +1,7 @@
 package com.example.security.controllers;
 
-import com.example.security.dto.CustomerLogin;
 import com.example.security.services.TestService;
-import com.example.security.utils.ApiResponse;
+import com.example.security.models.ApiResponse;
 import com.example.security.utils.Translator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
