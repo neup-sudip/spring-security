@@ -1,15 +1,20 @@
 package com.example.security.services;
 
+import com.example.security.dto.CustomerDto;
 import com.example.security.entity.Customer;
 import com.example.security.repos.UserRepository;
-import com.example.security.utils.ApiResponse;
-import com.example.security.utils.CustomException;
+import com.example.security.models.ApiResponse;
+import com.example.security.exception.CustomException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static com.example.security.mapper.CustomMapper.dtoCustomMapper;
 
 @Service
 @RequiredArgsConstructor
@@ -17,29 +22,32 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public List<Customer> getUsers() {
-        return userRepository.findAll();
+    public List<CustomerDto> getUsers() {
+        return userRepository.findAll(Sort.by("id")).stream()
+                .map(dtoCustomMapper::cutomerToCustomerDto).collect(Collectors.toList());
     }
 
-    public Optional<Customer> getUserByUsername(String username){
-        return userRepository.findByUsername(username);
+    public Optional<CustomerDto> getUserByUsername(String username){
+        Optional<Customer> customer = userRepository.findByUsername(username);
+        return customer.map(dtoCustomMapper::cutomerToCustomerDto);
     }
 
-    public Optional<Customer> getUserById(long id) {
-        return userRepository.findById(id);
+    public Optional<CustomerDto> getUserById(long id) {
+        Optional<Customer> customer = userRepository.findById(id);
+        return customer.map(dtoCustomMapper::cutomerToCustomerDto);
     }
 
-    public Customer addNewUser(Customer customer) {
+    public CustomerDto addNewUser(Customer customer) {
         Optional<Customer> emailOrUsernameExist = userRepository.findByUsername(customer.getUsername());
         if (emailOrUsernameExist.isPresent()) {
             throw new CustomException("UserName is taken", 400);
         }
-        return userRepository.save(customer);
+        return dtoCustomMapper.cutomerToCustomerDto(userRepository.save(customer));
     }
 
     public ResponseEntity<ApiResponse> updateUser(Customer customer, long id) {
-        Optional<Customer> optCustomer = userRepository.findById(id);
-        if (optCustomer.isEmpty()) {
+        Customer prevCustomer = userRepository.findById(id).orElse(null);
+        if (prevCustomer == null) {
             ApiResponse apiResponse = new ApiResponse(false, null, "User not found !");
             return ResponseEntity.status(400).body(apiResponse);
         }
@@ -50,18 +58,18 @@ public class UserService {
             return ResponseEntity.status(400).body(apiResponse);
         }
 
-        Customer prevCustomer = optCustomer.get();
         prevCustomer.setRole(customer.getRole());
         prevCustomer.setUsername(customer.getUsername());
         prevCustomer.setPassword(customer.getPassword());
         Customer newCustomer = userRepository.save(prevCustomer);
 
-        ApiResponse apiResponse = new ApiResponse(true, newCustomer, "User updated successfully !");
+        ApiResponse apiResponse = new ApiResponse(true, dtoCustomMapper.cutomerToCustomerDto(newCustomer),
+                "User updated successfully !");
         return ResponseEntity.status(200).body(apiResponse);
     }
 
-    public Optional<Customer> login(String username, String password){
-        return Optional.ofNullable(userRepository.findByUsernameAndPassword(username, password));
+    public Optional<Customer> login(String username){
+        return userRepository.findByUsername(username);
     }
 
 }

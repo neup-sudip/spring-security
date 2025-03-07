@@ -9,9 +9,10 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<Customer, Long> {
+
     Optional<Customer> findByUsername(String username);
 
-    @Query("select customer from Customer customer where customer.id <> :id AND username = :username")
+    @Query(value = "SELECT * FROM users WHERE user_id <> :id AND username = :username LIMIT 1", nativeQuery = true)
     Customer findByNotIdAndUsername(long id, String username);
 
     Customer findByUsernameAndPassword(String username, String password);

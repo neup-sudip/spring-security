@@ -3,13 +3,13 @@ package com.example.security.repos;
 import com.example.security.entity.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-@Repository
-public interface RoleRepository extends JpaRepository<Role, Long> {
+@Component
+public interface RoleRepository extends JpaRepository<Role, Long>{
 
-    @Query("select role from Role role where role.roleId <> :id AND name = :name")
+    @Query(value = "SELECT * FROM roles WHERE role_id <> :id AND name = :name LIMIT 1", nativeQuery = true)
     Optional<Role> findByNotIdAndName(long id, String name);
 }

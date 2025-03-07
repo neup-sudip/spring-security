@@ -1,10 +1,9 @@
 package com.example.security.utils;
 
-
 import com.example.security.entity.Customer;
+import com.example.security.models.AuthResponse;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.SignatureAlgorithm;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,7 +13,6 @@ import io.jsonwebtoken.Jwts;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 
@@ -27,16 +25,13 @@ public class JwtUtils {
     @Value("${jwt.expire.date}")
     private String JWT_EXPIRE;
 
-    public String extractToken(HttpServletRequest request, String key) {
-        try {
-            for (Cookie cookie : request.getCookies()) {
-                if (cookie.getName().equals(key)) {
-                    return cookie.getValue();
-                }
-            }
-        } catch (NullPointerException ex) {
-            return "";
+    public String extractToken(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
         }
+
         return "";
     }
 
@@ -82,5 +77,10 @@ public class JwtUtils {
 
         Map<String, Object> userMap = claims.get("user", Map.class);
         return (String) userMap.get("username");
+    }
+
+    public AuthResponse getAuthResponse(Customer customer){
+        String token = generateToken(customer);
+        return new AuthResponse(token, Integer.parseInt(JWT_EXPIRE));
     }
 }

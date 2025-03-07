@@ -2,18 +2,15 @@ package com.example.security.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.springframework.transaction.annotation.Transactional;
 
-@Cacheable
-@org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-@Transactional(readOnly = true)
+import java.io.Serializable;
+
 @Entity
 @Table(name = "roles")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class Role {
+public class Role implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "role_id")

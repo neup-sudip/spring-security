@@ -14,11 +14,12 @@ import java.util.Optional;
 @Slf4j
 public class RoleService {
 
-    private final RoleRepository roleRepo;
+    private final RoleRepository roleRepository;
 
-    @Cacheable(value = "defaultCache", cacheManager = "defaultCacheManager", key = "#roleId", unless="#result == null")
+    @Cacheable(value = "roleCache", key = "#roleId", unless="#result == null")
     public Optional<Role> getRoleById(long roleId) {
-        return roleRepo.findById(roleId);
+        log.info("From DB");
+        return roleRepository.findById(roleId);
     }
 
 }

@@ -2,13 +2,11 @@ package com.example.security.controllers;
 
 import com.example.security.dto.CustomerLogin;
 import com.example.security.entity.Customer;
+import com.example.security.models.ApiResponse;
 import com.example.security.services.UserService;
-import com.example.security.utils.ApiResponse;
-import com.example.security.utils.CryptoConverter;
 import com.example.security.utils.JwtUtils;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,30 +24,17 @@ public class PublicController {
     private final UserService userService;
     private final JwtUtils jwtUtils;
 
-    @GetMapping()
-    public String getString() {
-        return "Public Route";
-    }
-
     @PostMapping("/auth/login")
-    public ResponseEntity<ApiResponse> loginUser(@RequestBody CustomerLogin customerRequest, HttpServletResponse response) {
-        Optional<Customer> optCustomer = userService.login(customerRequest.getUsername(), customerRequest.getPassword());
-        if (optCustomer.isPresent()) {
+    public ResponseEntity<ApiResponse> loginUser(@RequestBody CustomerLogin customerRequest) {
+        Optional<Customer> optCustomer = userService.login(customerRequest.getUsername());
+        if (optCustomer.isPresent() && StringUtils.equals(optCustomer.get().getPassword(), customerRequest.getPassword())) {
             Customer customer = optCustomer.get();
 
-            String token = jwtUtils.generateToken(customer);
-            final Cookie cookie = new Cookie("auth", token);
-
-            cookie.setSecure(false);
-            cookie.setHttpOnly(false);
-            cookie.setMaxAge(COOKIE_EXPIRE);
-            cookie.setPath("/");
-            response.addCookie(cookie);
-
-            ApiResponse apiResponse = new ApiResponse(true, token, "Login success");
+            ApiResponse apiResponse = new ApiResponse(true, jwtUtils.getAuthResponse(customer),
+                    "Login success");
             return ResponseEntity.status(200).body(apiResponse);
         } else {
-            ApiResponse apiResponse = new ApiResponse(false, null, "user not found");
+            ApiResponse apiResponse = new ApiResponse(false, null, "User not found.");
             return ResponseEntity.status(400).body(apiResponse);
         }
     }
