@@ -1,5 +1,6 @@
-package com.example.security.utils;
+package com.example.security.exception;
 
+import com.example.security.models.ApiResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;

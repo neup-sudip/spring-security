@@ -1,4 +1,4 @@
-package com.example.security.utils;
+package com.example.security.exception;
 
 import lombok.Getter;
 import lombok.Setter;
