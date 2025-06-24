@@ -2,15 +2,21 @@ package com.example.security.controllers;
 
 import com.example.security.dto.CustomerLogin;
 import com.example.security.entity.Customer;
+import com.example.security.entity.UserActivity;
+import com.example.security.events.UserActivityEvent;
+import com.example.security.models.ActivityProperty;
 import com.example.security.entity.QrAuth;
 import com.example.security.enums.QrAuthState;
 import com.example.security.services.QrCodeService;
 import com.example.security.services.UserService;
 import com.example.security.models.ApiResponse;
+import com.example.security.utils.HttpHelpers;
 import com.example.security.utils.JwtUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,22 +33,44 @@ import java.util.UUID;
 @Slf4j
 public class PublicController {
 
+    private final HttpServletRequest request;
     private final UserService userService;
     private final JwtUtils jwtUtils;
+    private final ApplicationEventPublisher eventPublisher;
     private final QrCodeService qrCodeService;
 
     @PostMapping("/auth/login")
     public ResponseEntity<ApiResponse> loginUser(@RequestBody CustomerLogin customerRequest) {
+        ApiResponse apiResponse;
         Optional<Customer> optCustomer = userService.login(customerRequest.getUsername());
-        if (optCustomer.isPresent() && StringUtils.equals(optCustomer.get().getPassword(), customerRequest.getPassword())) {
+        if (optCustomer.isPresent()) {
+            apiResponse = ApiResponse.failed("Username/password did not match.");
             Customer customer = optCustomer.get();
-
-            ApiResponse apiResponse = ApiResponse.success(jwtUtils.getAuthResponse(customer), "Login Success");
-            return ResponseEntity.status(200).body(apiResponse);
+            if(StringUtils.equals(optCustomer.get().getPassword(), customerRequest.getPassword())){
+                apiResponse = ApiResponse.success(jwtUtils.getAuthResponse(customer), "Login success");
+            }
         } else {
-            ApiResponse apiResponse = ApiResponse.failed("User not found");
-            return ResponseEntity.status(400).body(apiResponse);
+            apiResponse = ApiResponse.failed("User not found.");
         }
+        publishActivity(apiResponse, customerRequest.getUsername());
+        return ResponseEntity.status(200).body(apiResponse);
+    }
+
+    private void publishActivity(ApiResponse response, String username){
+
+        ActivityProperty prop = HttpHelpers.getActivity(request);
+
+        UserActivity activity = UserActivity.builder()
+                .user(username)
+                .recordedAt(LocalDateTime.now())
+                .ip(prop.getIp())
+                .agent(prop.getAgent())
+                .uri(prop.getUri())
+                .responseCode(response.isResult() ? "000" : "001")
+                .responseMessage(response.getMessage())
+                .build();
+
+        eventPublisher.publishEvent(new UserActivityEvent(this, activity));
     }
 
     @PostMapping(value = "/auth/qr/generate", produces = MediaType.IMAGE_PNG_VALUE)

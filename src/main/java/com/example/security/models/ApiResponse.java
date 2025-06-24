@@ -1,16 +1,18 @@
 package com.example.security.models;
 
 import com.example.security.common.ResponseCode;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.*;
+
+import java.io.Serializable;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ApiResponse {
+@Builder(toBuilder = true)
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class ApiResponse implements Serializable {
     private String code;
     private boolean result;
     private Object data;
@@ -34,5 +36,14 @@ public class ApiResponse {
 
     public static ApiResponse unauthorized(String message){
         return new ApiResponse(ResponseCode.UNAUTHORIZED.getCode(), false, null, message);
+    }
+
+    @Override
+    public String toString() {
+        return "ApiResponse{" +
+                "result=" + result +
+//                ", data=" + data +
+                ", message='" + message + '\'' +
+                '}';
     }
 }
