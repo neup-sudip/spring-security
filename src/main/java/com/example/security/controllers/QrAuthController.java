@@ -5,9 +5,13 @@ import com.example.security.entity.QrAuth;
 import com.example.security.enums.QrAuthState;
 import com.example.security.services.QrCodeService;
 import com.example.security.utils.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,21 +32,31 @@ public class QrAuthController {
 
     private final QrCodeService qrCodeService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final HttpServletRequest httpServletRequest;
 
-    @PostMapping("/generate")
-    public ResponseEntity<ApiResponse> generateQr() {
+    @PostMapping(value = "/generate", produces = MediaType.IMAGE_PNG_VALUE)
+    public ResponseEntity<byte[]> generateQr() {
         try {
             String uniqueToken = UUID.randomUUID().toString();
-            String qrImage = qrCodeService.generateQrCodeImage(uniqueToken);
-            QrAuth auth = QrAuth.builder().id(uniqueToken).createAt(LocalDateTime.now())
-                    .token(qrImage).status(QrAuthState.PENDING.name()).build();
+
+            byte[] qrImageBytes = qrCodeService.generateQrCodeImage(uniqueToken);
+
+            QrAuth auth = QrAuth.builder()
+                    .id(uniqueToken)
+                    .createAt(LocalDateTime.now())
+                    .status(QrAuthState.PENDING.name())
+                    .build();
 
             qrCodeService.addOrUpdate(auth);
 
-            return ResponseEntity.status(200).body(ApiResponse.success(auth, "Please scan to login."));
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.IMAGE_PNG);
+            headers.set("X-Token", uniqueToken);
+
+            return new ResponseEntity<>(qrImageBytes, headers, HttpStatus.OK);
         } catch (Exception ex) {
             log.error("Exception qr generation: ", ex);
-            return ResponseEntity.status(500).body(ApiResponse.failed("Error generating QR."));
+            return ResponseEntity.status(500).build();
         }
     }
 
@@ -59,7 +73,7 @@ public class QrAuthController {
             long minutesBefore = Math.abs(Duration.between(qrAuth.getCreateAt(), LocalDateTime.now()).toMinutes());
 
             if (!StringUtils.equals(qrAuth.getStatus(), QrAuthState.PENDING.name()) || minutesBefore >= 2) {
-                return ResponseEntity.status(400).body(ApiResponse.failed("Invalid login request."));
+                return ResponseEntity.status(400).body(ApiResponse.failed("Session expired. Please create new one"));
             }
 
             qrAuth.setStatus(QrAuthState.VERIFIED.name());

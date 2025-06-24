@@ -21,15 +21,14 @@ public class QrCodeService {
 
     private final QrAuthRepository qrAuthRepository;
 
-    public String generateQrCodeImage(String token) throws WriterException, IOException {
+    public byte[] generateQrCodeImage(String token) throws WriterException, IOException {
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         BitMatrix bitMatrix = qrCodeWriter.encode(token, BarcodeFormat.QR_CODE, 250, 250);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         MatrixToImageWriter.writeToStream(bitMatrix, "PNG", outputStream);
 
-        byte[] qrCodeImage = outputStream.toByteArray();
-        return Base64.getEncoder().encodeToString(qrCodeImage);
+        return outputStream.toByteArray();
     }
 
     public void addOrUpdate(QrAuth qrAuth){
