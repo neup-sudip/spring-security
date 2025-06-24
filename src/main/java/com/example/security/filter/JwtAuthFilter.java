@@ -36,7 +36,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             boolean isValid = jwtUtils.validateToken(token);
             username = isValid ? jwtUtils.getUsername(token) : null;
         }
-        log.info("USERNAME: {}", username);
 
         if(username != null){
             UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);

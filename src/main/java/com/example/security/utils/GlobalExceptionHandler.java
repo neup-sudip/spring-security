@@ -26,12 +26,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             errors.put(errorTitle, errorMessage);
         });
 
-        return  ResponseEntity.status(400).body(new ApiResponse(false, errors, "Error !")) ;
+        return  ResponseEntity.status(400).body(ApiResponse.failed(errors, "Error !")) ;
     }
 
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ApiResponse> handleCustomException(CustomException exception){
-        ApiResponse apiResponse = new ApiResponse( false, null, exception.getMessage());
+        ApiResponse apiResponse = ApiResponse.failed(exception.getMessage());
         return ResponseEntity.status(exception.getStatus()).body(apiResponse);
     }
 }

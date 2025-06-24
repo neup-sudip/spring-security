@@ -20,7 +20,7 @@ public class QrAuth {
     private String status;
 
     @Column(name = "token")
-    private String token;
+    private String user;
 
     @Column(name = "create_at")
     private LocalDateTime createAt;

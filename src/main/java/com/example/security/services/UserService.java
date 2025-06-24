@@ -48,13 +48,13 @@ public class UserService {
     public ResponseEntity<ApiResponse> updateUser(Customer customer, long id) {
         Customer prevCustomer = userRepository.findById(id).orElse(null);
         if (prevCustomer == null) {
-            ApiResponse apiResponse = new ApiResponse(false, null, "User not found !");
+            ApiResponse apiResponse = ApiResponse.failed("User not found !");
             return ResponseEntity.status(400).body(apiResponse);
         }
 
         Customer emailOrUsernameExist = userRepository.findByNotIdAndUsername(id, customer.getUsername());
         if (emailOrUsernameExist != null) {
-            ApiResponse apiResponse = new ApiResponse(false, null, "Email/Username already exist !");
+            ApiResponse apiResponse = ApiResponse.failed("Email/Username already exist !");
             return ResponseEntity.status(400).body(apiResponse);
         }
 
@@ -63,7 +63,7 @@ public class UserService {
         prevCustomer.setPassword(customer.getPassword());
         Customer newCustomer = userRepository.save(prevCustomer);
 
-        ApiResponse apiResponse = new ApiResponse(true, dtoCustomMapper.cutomerToCustomerDto(newCustomer),
+        ApiResponse apiResponse = ApiResponse.success(dtoCustomMapper.cutomerToCustomerDto(newCustomer),
                 "User updated successfully !");
         return ResponseEntity.status(200).body(apiResponse);
     }

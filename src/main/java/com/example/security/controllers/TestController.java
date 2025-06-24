@@ -21,7 +21,7 @@ public class TestController {
 
     @GetMapping("cache/{key}")
     private ResponseEntity<ApiResponse> getTest(@PathVariable String key){
-        return ResponseEntity.ok(new ApiResponse(true, testService.testCache(key), "Cache data."));
+        return ResponseEntity.ok(ApiResponse.success(testService.testCache(key), "Cache data."));
     }
 
     @GetMapping()

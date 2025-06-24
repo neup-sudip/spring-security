@@ -20,7 +20,7 @@ public class UserController {
     @GetMapping("/list")
     @PreAuthorize("hasAuthority('GET_ALL_USER')")
     public ResponseEntity<ApiResponse> getAllUsers() {
-        ApiResponse apiResponse = new ApiResponse(true, userService.getUsers(), "All users fetched");
+        ApiResponse apiResponse = ApiResponse.success(userService.getUsers(), "All users fetched");
         return ResponseEntity.status(200).body(apiResponse);
     }
 
@@ -29,10 +29,10 @@ public class UserController {
     public ResponseEntity<ApiResponse> getUserById(@PathVariable long id) {
         Optional<CustomerDto> customer = userService.getUserById(id);
         if (customer.isEmpty()) {
-            ApiResponse apiResponse = new ApiResponse(true, null, "User not found.");
+            ApiResponse apiResponse = ApiResponse.failed("User not found.");
             return ResponseEntity.status(400).body(apiResponse);
         } else {
-            ApiResponse apiResponse = new ApiResponse(true, customer.get(), "User fetched successfully");
+            ApiResponse apiResponse = ApiResponse.success(customer.get(), "User fetched successfully");
             return ResponseEntity.status(200).body(apiResponse);
         }
     }
@@ -41,7 +41,7 @@ public class UserController {
     @PreAuthorize("hasAuthority('CREATE_USER')")
     public ResponseEntity<ApiResponse> createUser(@RequestBody Customer newCustomer) {
         CustomerDto customer = userService.addNewUser(newCustomer);
-        ApiResponse apiResponse = new ApiResponse(true, customer, "User created successfully !");
+        ApiResponse apiResponse = ApiResponse.success(customer, "User created successfully !");
         return ResponseEntity.status(200).body(apiResponse);
     }
 

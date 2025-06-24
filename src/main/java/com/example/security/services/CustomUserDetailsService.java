@@ -3,8 +3,6 @@ package com.example.security.services;
 import com.example.security.entity.Customer;
 import com.example.security.entity.Role;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -22,8 +20,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserService userServices;
     private final RoleService roleService;
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -43,7 +39,6 @@ public class CustomUserDetailsService implements UserDetailsService {
         Optional<Role> optRole = roleService.getRoleById(role);
 
         if (optRole.isEmpty()) {
-            logger.info("ROLE NOT FOUND !");
             authorities.add(new SimpleGrantedAuthority("GET_SINGLE_USER"));
         } else {
             String roleAuths = optRole.get().getAuthorities();

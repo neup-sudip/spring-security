@@ -23,7 +23,7 @@ public class JwtUtils {
     @Value("${jwt.secret.key}")
     private String JWT_SECRET;
 
-    @Value("${jwt.expire.date}")
+    @Value("${jwt.expire.sec}")
     private String JWT_EXPIRE;
 
     public String extractToken(HttpServletRequest request) {
@@ -51,7 +51,7 @@ public class JwtUtils {
         Date currentDate = new Date();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(currentDate);
-        calendar.add(Calendar.DAY_OF_MONTH, Integer.parseInt(JWT_EXPIRE));
+        calendar.add(Calendar.SECOND, Integer.parseInt(JWT_EXPIRE));
         Date updatedDate = calendar.getTime();
 
         return Jwts.builder()
@@ -82,7 +82,7 @@ public class JwtUtils {
     }
 
     public AuthResponse getAuthResponse(Customer customer){
-        String token = generateToken(customer);
+        String token = generateToken(Customer.builder().username(customer.getUsername()).build());
         return new AuthResponse(token, Integer.parseInt(JWT_EXPIRE));
     }
 }
