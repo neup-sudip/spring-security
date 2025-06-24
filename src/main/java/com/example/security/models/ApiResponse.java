@@ -1,16 +1,27 @@
 package com.example.security.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.*;
+
+import java.io.Serializable;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ApiResponse {
+@Builder(toBuilder = true)
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class ApiResponse implements Serializable {
     private boolean result;
     private Object data;
     private String message;
+
+    @Override
+    public String toString() {
+        return "ApiResponse{" +
+                "result=" + result +
+//                ", data=" + data +
+                ", message='" + message + '\'' +
+                '}';
+    }
 }

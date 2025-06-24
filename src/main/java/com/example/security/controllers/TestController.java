@@ -22,9 +22,9 @@ public class TestController {
     }
 
     @PostMapping()
-    public String getString() {
+    public ResponseEntity<ApiResponse> getString() {
         log.info("Hit test API");
-        return translator.getMessage("hello.sir");
+        return ResponseEntity.ok(new ApiResponse(true, null, translator.getMessage("hello.sir")));
     }
 
 }

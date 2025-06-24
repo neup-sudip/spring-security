@@ -1,7 +1,6 @@
 package com.example.security.entity;
 
 import com.example.security.utils.CryptoConverter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
