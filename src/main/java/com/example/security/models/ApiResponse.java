@@ -1,4 +1,4 @@
-package com.example.security.utils;
+package com.example.security.models;
 
 import com.example.security.common.ResponseCode;
 import lombok.AllArgsConstructor;

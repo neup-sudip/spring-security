@@ -3,7 +3,7 @@ package com.example.security.controllers;
 import com.example.security.dto.CustomerDto;
 import com.example.security.entity.Customer;
 import com.example.security.services.UserService;
-import com.example.security.utils.ApiResponse;
+import com.example.security.models.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

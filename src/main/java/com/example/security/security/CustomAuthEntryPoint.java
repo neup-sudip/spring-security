@@ -1,6 +1,6 @@
 package com.example.security.security;
 
-import com.example.security.utils.ApiResponse;
+import com.example.security.models.ApiResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -6,7 +6,7 @@ import com.example.security.entity.QrAuth;
 import com.example.security.enums.QrAuthState;
 import com.example.security.services.QrCodeService;
 import com.example.security.services.UserService;
-import com.example.security.utils.ApiResponse;
+import com.example.security.models.ApiResponse;
 import com.example.security.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

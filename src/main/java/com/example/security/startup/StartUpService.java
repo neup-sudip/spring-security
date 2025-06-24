@@ -1,4 +1,4 @@
-package com.example.security.utils;
+package com.example.security.startup;
 
 import com.example.security.dto.CustomerDto;
 import com.example.security.entity.Customer;
@@ -7,8 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
