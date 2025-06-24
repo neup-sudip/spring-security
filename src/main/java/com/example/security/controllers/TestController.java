@@ -24,7 +24,7 @@ public class TestController {
     @PostMapping()
     public ResponseEntity<ApiResponse> getString() {
         log.info("Hit test API");
-        return ResponseEntity.ok(new ApiResponse(true, null, translator.getMessage("hello.sir")));
+        return ResponseEntity.ok(ApiResponse.success(null, translator.getMessage("hello.sir")));
     }
 
 }
