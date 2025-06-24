@@ -13,7 +13,7 @@ public class FilterConfig {
     public FilterRegistrationBean<LoggingFilter> loggingFilter() {
         FilterRegistrationBean<LoggingFilter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(new LoggingFilter());
-        registrationBean.addUrlPatterns("/*");
+        registrationBean.addUrlPatterns("/public/*", "/api/v1/*");
         registrationBean.setOrder(2);
         return registrationBean;
     }
@@ -22,7 +22,7 @@ public class FilterConfig {
     public FilterRegistrationBean<SignatureFilter> signatureFilter() {
         FilterRegistrationBean<SignatureFilter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(new SignatureFilter());
-        registrationBean.addUrlPatterns("/*");
+        registrationBean.addUrlPatterns("/api/v1/*");
         registrationBean.setOrder(3);
         return registrationBean;
     }
