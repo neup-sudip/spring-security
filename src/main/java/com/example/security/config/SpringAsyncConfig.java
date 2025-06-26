@@ -2,6 +2,7 @@ package com.example.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.scheduling.annotation.EnableAsync;
 
@@ -35,7 +36,7 @@ public class SpringAsyncConfig {
             private final AtomicInteger counter = new AtomicInteger();
 
             @Override
-            public Thread newThread(@Nullable Runnable runnable) {
+            public Thread newThread(@NonNull Runnable runnable) {
                 return new Thread(runnable, "UserEvent-" + counter.incrementAndGet());
             }
         };
